@@ -1,0 +1,8 @@
+node_modules/
+data/
+.env
+*.log
+temp-check.js
+temp-*.js
+data/shots/
+data/pdfshots/

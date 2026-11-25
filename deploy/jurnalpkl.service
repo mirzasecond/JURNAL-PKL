@@ -1,0 +1,23 @@
+[Unit]
+Description=Jurnal PKL Website
+After=network.target
+
+[Service]
+Type=simple
+User=www-data
+Group=www-data
+WorkingDirectory=/opt/jurnalpkl
+EnvironmentFile=/opt/jurnalpkl/.env
+ExecStart=/usr/bin/node src/index.js
+Restart=always
+RestartSec=3
+
+# Hardening
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=true
+ReadWritePaths=/opt/jurnalpkl/data
+
+[Install]
+WantedBy=multi-user.target

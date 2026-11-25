@@ -1,0 +1,116 @@
+<%
+  const v = journal || {};
+  const isEdit = !!(journal && journal.id);
+  const today = new Date().toISOString().slice(0, 10);
+%>
+<div class="page-head">
+  <div class="grow">
+    <h1><%= isEdit ? 'Edit Jurnal' : 'Tambah Jurnal' %></h1>
+    <p class="sub"><%= isEdit ? 'Perbarui catatan kegiatan PKL.' : 'Catat kegiatan PKL hari ini.' %></p>
+  </div>
+  <a class="btn btn-ghost" href="<%= isEdit ? '/journals/' + v.id : '/journals' %>">Batal</a>
+</div>
+
+<form method="post" action="<%= isEdit ? '/journals/' + v.id : '/journals' %>" novalidate>
+  <input type="hidden" name="_csrf" value="<%= csrf %>">
+
+  <div class="card">
+    <fieldset>
+      <legend>Waktu Kegiatan</legend>
+      <div class="row row-3">
+        <div class="field">
+          <label for="activity_date">Tanggal <span class="req" aria-hidden="true">*</span></label>
+          <input type="date" id="activity_date" name="activity_date" value="<%= v.activity_date || today %>" aria-invalid="<%= errors.activity_date ? 'true' : 'false' %>" required>
+          <% if (errors.activity_date) { %><p class="err"><%= errors.activity_date %></p><% } %>
+        </div>
+        <div class="field">
+          <label for="start_time">Jam Mulai</label>
+          <input type="time" id="start_time" name="start_time" value="<%= v.start_time || '' %>">
+        </div>
+        <div class="field">
+          <label for="end_time">Jam Selesai</label>
+          <input type="time" id="end_time" name="end_time" value="<%= v.end_time || '' %>" aria-invalid="<%= errors.end_time ? 'true' : 'false' %>">
+          <% if (errors.end_time) { %><p class="err"><%= errors.end_time %></p><% } else { %><p class="hint">Kosongkan jika tidak diperlukan.</p><% } %>
+        </div>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Isi Kegiatan</legend>
+      <div class="field">
+        <label for="title">Judul Kegiatan <span class="req" aria-hidden="true">*</span></label>
+        <input type="text" id="title" name="title" value="<%= v.title || '' %>" aria-invalid="<%= errors.title ? 'true' : 'false' %>" required maxlength="200">
+        <% if (errors.title) { %><p class="err"><%= errors.title %></p><% } %>
+      </div>
+      <div class="field">
+        <label for="description">Deskripsi Kegiatan <span class="req" aria-hidden="true">*</span></label>
+        <textarea id="description" name="description" rows="4" aria-invalid="<%= errors.description ? 'true' : 'false' %>" required><%= v.description || '' %></textarea>
+        <% if (errors.description) { %><p class="err"><%= errors.description %></p><% } %>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Hasil &amp; Refleksi <span class="muted tiny" style="font-weight:400;">(opsional)</span></legend>
+      <div class="field">
+        <label for="result">Hasil Kegiatan</label>
+        <textarea id="result" name="result" rows="2"><%= v.result || '' %></textarea>
+      </div>
+      <div class="row row-2">
+        <div class="field">
+          <label for="obstacles">Kendala</label>
+          <textarea id="obstacles" name="obstacles" rows="2"><%= v.obstacles || '' %></textarea>
+        </div>
+        <div class="field">
+          <label for="solutions">Solusi</label>
+          <textarea id="solutions" name="solutions" rows="2"><%= v.solutions || '' %></textarea>
+        </div>
+      </div>
+    </fieldset>
+
+    <div class="btn-row">
+      <button type="submit" class="btn btn-primary" data-busy><%= isEdit ? 'Simpan Perubahan' : 'Simpan Jurnal' %></button>
+      <a class="btn btn-outline" href="<%= isEdit ? '/journals/' + v.id : '/journals' %>">Kembali</a>
+    </div>
+  </div>
+</form>
+
+<% if (isEdit) { %>
+  <div class="card">
+    <div class="card-head">
+      <h2 class="grow">Foto Dokumentasi</h2>
+      <span class="badge badge-muted"><%= photos.length %> / <%= maxPhotos %></span>
+    </div>
+    <p class="muted small">Foto ditambahkan setelah jurnal tersimpan, dari halaman ini atau halaman detail jurnal.</p>
+    <div id="photoManager" data-journal-id="<%= v.id %>" data-csrf="<%= csrf %>" data-max="<%= maxPhotos %>" data-max-size-mb="<%= maxSizeMb %>" data-count="<%= photos.length %>">
+      <div class="photo-grid mb-2" id="photoGrid">
+        <% photos.forEach(p => { %>
+          <figure data-photo-id="<%= p.id %>">
+            <img src="/photos/<%= p.id %>" alt="<%= p.caption || 'Foto dokumentasi jurnal' %>" loading="lazy">
+            <% if (p.caption) { %><figcaption><%= p.caption %></figcaption><% } %>
+            <button type="button" class="photo-del" data-delete-photo="<%= p.id %>" aria-label="Hapus foto">
+              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l8 8M14 6l-8 8"/></svg>
+            </button>
+          </figure>
+        <% }) %>
+      </div>
+      <% if (photos.length >= maxPhotos) { %>
+        <div class="alert alert-info mb-0">
+          <span>Batas <%= maxPhotos %> foto untuk jurnal ini sudah tercapai. Hapus salah satu foto di atas jika ingin menggantinya.</span>
+        </div>
+      <% } else { %>
+        <div class="dropzone" id="dropzone">
+          <input type="file" id="photoInput" accept="image/jpeg,image/png,image/webp" multiple hidden>
+          <p class="mb-1 dz-text"><strong>Tambah foto</strong> — pilih berkas atau seret ke sini</p>
+          <p class="hint mb-0">JPG, PNG, atau WebP · maksimal <%= maxSizeMb %> MB per foto · maksimal <%= maxPhotos %> foto (sisa <%= maxPhotos - photos.length %> slot)</p>
+          <button type="button" class="btn btn-outline btn-sm mt-2" id="pickPhoto">Pilih Foto</button>
+        </div>
+        <div class="upload-status" id="uploadStatus" role="status" aria-live="polite"></div>
+      <% } %>
+    </div>
+    <p class="tiny muted mt-2 mb-0">Foto disimpan terpisah dari teks jurnal — kegagalan unggah tidak menghapus jurnal yang sudah tersimpan.</p>
+  </div>
+<% } else { %>
+  <div class="alert alert-info mt-2">
+    <span>Simpan jurnal terlebih dahulu. Setelah tersimpan, kamu dapat menambahkan foto dokumentasi di halaman detail jurnal.</span>
+  </div>
+<% } %>

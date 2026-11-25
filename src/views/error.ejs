@@ -1,0 +1,12 @@
+<div class="card empty" style="max-width:560px;margin:2rem auto;">
+  <div class="ico" aria-hidden="true">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg>
+  </div>
+  <h1 style="font-size:1.4rem;"><%= title %></h1>
+  <p><%= message %></p>
+  <% if (typeof me !== 'undefined' && me) { %>
+    <a class="btn btn-primary" href="/dashboard">Kembali ke Dashboard</a>
+  <% } else { %>
+    <a class="btn btn-primary" href="/">Kembali ke Beranda</a>
+  <% } %>
+</div>

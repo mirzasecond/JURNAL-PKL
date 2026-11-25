@@ -1,0 +1,110 @@
+<%
+  const fmt = (iso) => {
+    if (!iso) return '-';
+    const d = new Date(iso + 'T00:00:00');
+    if (isNaN(d)) return iso;
+    return d.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+  };
+  const shortDate = (iso) => {
+    if (!iso) return { d: '–', m: '' };
+    const d = new Date(iso + 'T00:00:00');
+    if (isNaN(d)) return { d: iso, m: '' };
+    return { d: d.getDate(), m: d.toLocaleDateString('id-ID', { month: 'short' }) };
+  };
+  const qs = (p) => {
+    const u = new URLSearchParams();
+    if (q) u.set('q', q);
+    if (from) u.set('from', from);
+    if (to) u.set('to', to);
+    if (sort) u.set('sort', sort);
+    u.set('page', p);
+    return '/journals?' + u.toString();
+  };
+  const hasFilter = q || from || to;
+%>
+<div class="page-head">
+  <div class="grow">
+    <h1>Jurnal</h1>
+    <p class="sub"><%= total %> catatan <%= hasFilter ? 'sesuai filter' : 'tersimpan' %></p>
+  </div>
+  <a class="btn btn-primary" href="/journals/new">
+    <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 3a.75.75 0 01.75.75v5.5h5.5a.75.75 0 010 1.5h-5.5v5.5a.75.75 0 01-1.5 0v-5.5h-5.5a.75.75 0 010-1.5h5.5v-5.5A.75.75 0 0110 3z"/></svg>
+    Tambah Jurnal
+  </a>
+</div>
+
+<div class="card mb-2">
+  <form method="get" action="/journals" class="filters" role="search">
+    <div class="field">
+      <label for="q" class="sr-only">Cari jurnal</label>
+      <input type="text" id="q" name="q" value="<%= q %>" placeholder="Cari judul atau deskripsi…">
+    </div>
+    <div class="field">
+      <label for="from" class="sr-only">Dari tanggal</label>
+      <input type="date" id="from" name="from" value="<%= from %>">
+    </div>
+    <div class="field">
+      <label for="to" class="sr-only">Sampai tanggal</label>
+      <input type="date" id="to" name="to" value="<%= to %>">
+    </div>
+    <div class="field">
+      <label for="sort" class="sr-only">Urutan</label>
+      <select id="sort" name="sort">
+        <option value="desc" <%= sort === 'DESC' ? 'selected' : '' %>>Terbaru</option>
+        <option value="asc" <%= sort === 'ASC' ? 'selected' : '' %>>Terlama</option>
+      </select>
+    </div>
+    <div class="filter-actions" style="grid-column:1/-1;">
+      <button type="submit" class="btn btn-primary btn-sm">Terapkan</button>
+      <% if (hasFilter) { %><a class="btn btn-ghost btn-sm" href="/journals">Reset</a><% } %>
+    </div>
+  </form>
+</div>
+
+<% if (journals.length === 0) { %>
+  <div class="card empty">
+    <div class="ico">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+    </div>
+    <% if (hasFilter) { %>
+      <h3>Tidak ada hasil</h3>
+      <p>Tidak ada jurnal yang cocok dengan pencarian atau filter tanggal yang dipilih.</p>
+      <a class="btn btn-outline" href="/journals">Hapus Filter</a>
+    <% } else { %>
+      <h3>Belum ada jurnal</h3>
+      <p>Catatan kegiatan PKL-mu akan muncul di sini setelah kamu menyimpan jurnal pertama.</p>
+      <a class="btn btn-primary" href="/journals/new">Tambah Jurnal</a>
+    <% } %>
+  </div>
+<% } else { %>
+  <div class="card">
+    <div class="list">
+      <% journals.forEach(j => { const sd = shortDate(j.activity_date); %>
+        <div class="list-item">
+          <div class="date-badge"><div class="d"><%= sd.d %></div><div class="m"><%= sd.m %></div></div>
+          <div class="grow">
+            <h3><a href="/journals/<%= j.id %>"><%= j.title %></a></h3>
+            <div class="meta">
+              <span><%= fmt(j.activity_date) %></span>
+              <% if (j.start_time) { %><span><%= j.start_time %><%= j.end_time ? '–' + j.end_time : '' %></span><% } %>
+              <% if (j.photo_count > 0) { %><span class="badge badge-photo"><%= j.photo_count %> foto</span><% } %>
+            </div>
+            <p class="snippet"><%= j.description %></p>
+          </div>
+          <a class="btn btn-ghost btn-sm" href="/journals/<%= j.id %>/edit">Edit</a>
+        </div>
+      <% }) %>
+    </div>
+  </div>
+
+  <% if (pages > 1) { %>
+    <nav class="pagination" aria-label="Navigasi halaman">
+      <% if (page > 1) { %><a href="<%= qs(page - 1) %>" aria-label="Halaman sebelumnya">‹</a><% } %>
+      <% for (let p = 1; p <= pages; p++) { %>
+        <% if (p === page) { %><span class="current" aria-current="page"><%= p %></span>
+        <% } else { %><a href="<%= qs(p) %>"><%= p %></a><% } %>
+      <% } %>
+      <% if (page < pages) { %><a href="<%= qs(page + 1) %>" aria-label="Halaman berikutnya">›</a><% } %>
+    </nav>
+  <% } %>
+<% } %>

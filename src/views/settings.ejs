@@ -1,0 +1,63 @@
+<div class="page-head">
+  <div class="grow">
+    <h1>Pengaturan</h1>
+    <p class="sub">Kelola akun dan informasi produk.</p>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-head"><h2>Informasi Akun</h2></div>
+  <div class="list">
+    <div class="list-item">
+      <div class="grow">
+        <h3>Email</h3>
+        <div class="meta"><span><%= email %></span></div>
+      </div>
+    </div>
+  </div>
+  <form method="post" action="/logout" class="mt-2">
+    <input type="hidden" name="_csrf" value="<%= csrf %>">
+    <button type="submit" class="btn btn-outline">Keluar dari Akun</button>
+  </form>
+</div>
+
+<div class="card">
+  <div class="card-head"><h2>Ubah Kata Sandi</h2></div>
+  <form method="post" action="/settings/change-password">
+    <input type="hidden" name="_csrf" value="<%= csrf %>">
+    <div class="field">
+      <label for="current_password">Kata Sandi Saat Ini</label>
+      <input type="password" id="current_password" name="current_password" required autocomplete="current-password">
+    </div>
+    <div class="row row-2">
+      <div class="field">
+        <label for="new_password">Kata Sandi Baru</label>
+        <input type="password" id="new_password" name="new_password" required minlength="8" autocomplete="new-password">
+      </div>
+      <div class="field">
+        <label for="password_confirm">Konfirmasi Kata Sandi Baru</label>
+        <input type="password" id="password_confirm" name="password_confirm" required autocomplete="new-password">
+      </div>
+    </div>
+    <button type="submit" class="btn btn-primary" data-busy>Simpan Kata Sandi</button>
+  </form>
+</div>
+
+<div class="card">
+  <div class="card-head"><h2>Tentang Produk</h2></div>
+  <p class="small"><strong>Jurnal PKL</strong> versi <strong>1.0.0</strong> — Catat · Pantau · Capai.</p>
+  <p class="small muted">Jurnal PKL membantu siswa SMK mencatat kegiatan Praktik Kerja Lapangan, menyimpan dokumentasi foto, serta melihat riwayat dan progres. Data pribadi yang dikumpulkan hanya yang diperlukan untuk keperluan jurnal PKL: email akun, identitas siswa, informasi tempat PKL, isi jurnal, dan foto dokumentasi. Data hanya dapat diakses oleh pemilik akun. Anda dapat menghapus akun beserta seluruh data kapan saja dari halaman ini.</p>
+</div>
+
+<div class="card" style="border-color:#f9c9c4;">
+  <div class="card-head"><h2 style="color:var(--danger);">Hapus Akun</h2></div>
+  <p class="small">Menghapus akun akan menghapus secara permanen seluruh profil, informasi PKL, jurnal, dan foto dokumentasi Anda. Tindakan ini tidak dapat dibatalkan.</p>
+  <form method="post" action="/settings/delete-account" data-confirm data-confirm-title="Hapus akun permanen?" data-confirm-message="Seluruh data jurnal dan foto Anda akan dihapus dan tidak dapat dikembalikan.">
+    <input type="hidden" name="_csrf" value="<%= csrf %>">
+    <div class="field">
+      <label for="confirm_text">Ketik <strong>HAPUS</strong> untuk mengonfirmasi</label>
+      <input type="text" id="confirm_text" name="confirm_text" required autocomplete="off" placeholder="HAPUS">
+    </div>
+    <button type="submit" class="btn btn-danger">Hapus Akun Saya</button>
+  </form>
+</div>

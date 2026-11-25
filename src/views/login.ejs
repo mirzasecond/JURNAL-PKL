@@ -1,0 +1,26 @@
+<div class="auth-col">
+  <div class="auth-card">
+    <h1>Selamat datang kembali</h1>
+    <p class="sub">Masuk untuk melanjutkan mencatat jurnal PKL-mu.</p>
+
+    <% if (errors.form) { %>
+      <div class="alert alert-error" role="alert"><span><%= errors.form %></span></div>
+    <% } %>
+
+    <form method="post" action="/login" novalidate>
+      <input type="hidden" name="_csrf" value="<%= csrf %>">
+      <input type="hidden" name="next" value="<%= next %>">
+      <div class="field">
+        <label for="email">Email <span class="req" aria-hidden="true">*</span></label>
+        <input type="email" id="email" name="email" value="<%= values.email || '' %>" required autocomplete="email" autofocus>
+      </div>
+      <div class="field">
+        <label for="password">Kata Sandi <span class="req" aria-hidden="true">*</span></label>
+        <input type="password" id="password" name="password" required autocomplete="current-password">
+      </div>
+      <button type="submit" class="btn btn-primary btn-block" data-busy>Masuk</button>
+    </form>
+    <p class="auth-link"><a href="/forgot-password">Lupa kata sandi?</a></p>
+  </div>
+  <p class="auth-foot">Belum punya akun? <a href="/register">Daftar sekarang</a></p>
+</div>

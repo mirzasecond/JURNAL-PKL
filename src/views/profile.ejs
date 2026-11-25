@@ -1,0 +1,101 @@
+<div class="page-head">
+  <div class="grow">
+    <h1>Profil &amp; PKL</h1>
+    <p class="sub">Kelola data diri dan informasi tempat PKL-mu.</p>
+  </div>
+</div>
+
+<div class="card">
+  <form method="post" action="/profile" enctype="multipart/form-data" novalidate>
+    <input type="hidden" name="_csrf" value="<%= csrf %>">
+
+    <fieldset>
+      <legend>Foto Profil</legend>
+      <div class="flex items-center gap-2 wrap">
+        <% if (profile.profile_photo_path) { %>
+          <img src="/profile-photo?t=<%= Date.now() %>" alt="Foto profil" class="avatar" style="width:64px;height:64px;">
+        <% } else { %>
+          <span class="avatar" style="width:64px;height:64px;font-size:1.2rem;"><%= (profile.full_name || 'S').split(/\s+/).map(w=>w[0]).slice(0,2).join('').toUpperCase() %></span>
+        <% } %>
+        <div style="flex:1;min-width:200px;">
+          <input type="file" name="photo" id="photo" accept="image/jpeg,image/png,image/webp">
+          <p class="hint mb-0">JPG, PNG, atau WebP · maksimal 5 MB. Biarkan kosong untuk mempertahankan foto saat ini.</p>
+          <% if (errors.photo) { %><p class="err"><%= errors.photo %></p><% } %>
+        </div>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Identitas Siswa</legend>
+      <div class="field">
+        <label for="full_name">Nama Lengkap <span class="req" aria-hidden="true">*</span></label>
+        <input type="text" id="full_name" name="full_name" value="<%= profile.full_name || '' %>" aria-invalid="<%= errors.full_name ? 'true' : 'false' %>" required>
+        <% if (errors.full_name) { %><p class="err"><%= errors.full_name %></p><% } %>
+      </div>
+      <div class="row row-2">
+        <div class="field">
+          <label for="student_number">NIS / NISN</label>
+          <input type="text" id="student_number" name="student_number" value="<%= profile.student_number || '' %>">
+        </div>
+        <div class="field">
+          <label for="class_name">Kelas</label>
+          <input type="text" id="class_name" name="class_name" value="<%= profile.class_name || '' %>">
+        </div>
+      </div>
+      <div class="row row-2">
+        <div class="field">
+          <label for="program">Program Keahlian</label>
+          <input type="text" id="program" name="program" value="<%= profile.program || '' %>">
+        </div>
+        <div class="field">
+          <label for="school_name">Nama Sekolah</label>
+          <input type="text" id="school_name" name="school_name" value="<%= profile.school_name || '' %>">
+        </div>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Informasi PKL</legend>
+      <div class="field">
+        <label for="company_name">Nama Perusahaan / Instansi <span class="req" aria-hidden="true">*</span></label>
+        <input type="text" id="company_name" name="company_name" value="<%= internship.company_name || '' %>" aria-invalid="<%= errors.company_name ? 'true' : 'false' %>" required>
+        <% if (errors.company_name) { %><p class="err"><%= errors.company_name %></p><% } %>
+      </div>
+      <div class="field">
+        <label for="company_address">Alamat</label>
+        <input type="text" id="company_address" name="company_address" value="<%= internship.company_address || '' %>">
+      </div>
+      <div class="row row-2">
+        <div class="field">
+          <label for="supervisor_name">Pembimbing Industri</label>
+          <input type="text" id="supervisor_name" name="supervisor_name" value="<%= internship.supervisor_name || '' %>">
+        </div>
+        <div class="field">
+          <label for="position">Posisi / Divisi</label>
+          <input type="text" id="position" name="position" value="<%= internship.position || '' %>">
+        </div>
+      </div>
+      <div class="row row-2">
+        <div class="field">
+          <label for="start_date">Tanggal Mulai <span class="req" aria-hidden="true">*</span></label>
+          <input type="date" id="start_date" name="start_date" value="<%= internship.start_date || '' %>" aria-invalid="<%= errors.start_date ? 'true' : 'false' %>" required>
+          <% if (errors.start_date) { %><p class="err"><%= errors.start_date %></p><% } %>
+        </div>
+        <div class="field">
+          <label for="end_date">Tanggal Selesai <span class="req" aria-hidden="true">*</span></label>
+          <input type="date" id="end_date" name="end_date" value="<%= internship.end_date || '' %>" aria-invalid="<%= errors.end_date ? 'true' : 'false' %>" required>
+          <% if (errors.end_date) { %><p class="err"><%= errors.end_date %></p><% } %>
+        </div>
+      </div>
+      <div class="field">
+        <label for="description">Deskripsi Kegiatan PKL</label>
+        <textarea id="description" name="description" rows="3"><%= internship.description || '' %></textarea>
+      </div>
+      <p class="tiny muted mb-0">Perubahan informasi PKL tidak mengubah isi jurnal yang sudah dibuat.</p>
+    </fieldset>
+
+    <div class="btn-row">
+      <button type="submit" class="btn btn-primary" data-busy>Simpan Perubahan</button>
+    </div>
+  </form>
+</div>

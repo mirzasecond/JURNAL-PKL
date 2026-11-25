@@ -1,0 +1,61 @@
+<%
+  const now = new Date();
+  const years = [];
+  for (let y = now.getFullYear() + 1; y >= now.getFullYear() - 5; y--) years.push(y);
+%>
+<div class="page-head">
+  <div class="grow">
+    <h1>Ekspor Laporan PDF</h1>
+    <p class="sub">Pilih periode, tinjau pratinjau, lalu unduh laporan bulanan.</p>
+  </div>
+</div>
+
+<div class="grid grid-2 export-grid">
+  <div class="card">
+    <h2>Periode Laporan</h2>
+    <form id="exportForm" class="mt-2">
+      <div class="row row-2">
+        <div class="field">
+          <label for="month">Bulan</label>
+          <select id="month" name="month">
+            <% MONTHS_ID.forEach((m, i) => { %>
+              <option value="<%= i + 1 %>" <%= (i + 1) === month ? 'selected' : '' %>><%= m %></option>
+            <% }) %>
+          </select>
+        </div>
+        <div class="field">
+          <label for="year">Tahun</label>
+          <select id="year" name="year">
+            <% years.forEach(y => { %>
+              <option value="<%= y %>" <%= y === year ? 'selected' : '' %>><%= y %></option>
+            <% }) %>
+          </select>
+        </div>
+      </div>
+      <div class="btn-row">
+        <button type="button" class="btn btn-outline" id="previewBtn">Tampilkan Pratinjau</button>
+        <a class="btn btn-primary" id="downloadBtn" href="/export/download?year=<%= year %>&month=<%= month %>">
+          <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 2.75a.75.75 0 01.75.75v8.19l2.72-2.72a.75.75 0 111.06 1.06l-4 4a.75.75 0 01-1.06 0l-4-4a.75.75 0 111.06-1.06l2.72 2.72V3.5a.75.75 0 01.75-.75z"/><path d="M3.5 13.5a.75.75 0 01.75.75v1.5h11.5v-1.5a.75.75 0 011.5 0v2.25a.75.75 0 01-.75.75H3.5a.75.75 0 01-.75-.75v-2.25a.75.75 0 01.75-.75z"/></svg>
+          Unduh PDF
+        </a>
+      </div>
+      <p class="tiny muted mt-2 mb-0">Laporan memuat identitas siswa, informasi PKL, ringkasan, dan daftar jurnal pada bulan terpilih.</p>
+    </form>
+  </div>
+
+  <div class="card preview-card">
+    <div class="card-head">
+      <h2 class="grow">Pratinjau</h2>
+      <span class="badge badge-muted" id="previewBadge">Belum dimuat</span>
+    </div>
+    <div id="previewArea" aria-live="polite">
+      <div class="preview-empty">
+        <div class="ico" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/><path d="M9 13h6M9 17h4"/></svg>
+        </div>
+        <h3>Belum ada pratinjau</h3>
+        <p class="mb-0">Pilih bulan dan tahun, lalu tekan <strong>Tampilkan Pratinjau</strong> untuk melihat ringkasan isi laporan sebelum mengunduh.</p>
+      </div>
+    </div>
+  </div>
+</div>

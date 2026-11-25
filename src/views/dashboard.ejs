@@ -1,0 +1,76 @@
+<%
+  const fmt = (iso) => {
+    if (!iso) return '-';
+    const d = new Date(iso + 'T00:00:00');
+    if (isNaN(d)) return iso;
+    return d.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+  };
+  const shortDate = (iso) => {
+    if (!iso) return '-';
+    const d = new Date(iso + 'T00:00:00');
+    if (isNaN(d)) return iso;
+    return { d: d.getDate(), m: d.toLocaleDateString('id-ID', { month: 'short' }), y: d.getFullYear() };
+  };
+%>
+<div class="page-head">
+  <div class="grow">
+    <h1>Halo, <%= profile.full_name.split(' ')[0] %> 👋</h1>
+    <p class="sub"><%= internship.company_name %> &middot; <%= fmt(internship.start_date) %> – <%= fmt(internship.end_date) %></p>
+  </div>
+  <a class="btn btn-primary" href="/journals/new">
+    <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 3a.75.75 0 01.75.75v5.5h5.5a.75.75 0 010 1.5h-5.5v5.5a.75.75 0 01-1.5 0v-5.5h-5.5a.75.75 0 010-1.5h5.5v-5.5A.75.75 0 0110 3z"/></svg>
+    Tambah Jurnal
+  </a>
+</div>
+
+<div class="grid grid-2 mb-2">
+  <div class="stat">
+    <div class="stat-label">Total Jurnal</div>
+    <div class="stat-value"><%= total %></div>
+    <div class="stat-note">catatan tersimpan</div>
+  </div>
+  <div class="stat">
+    <div class="stat-label">Hari Tercatat</div>
+    <div class="stat-value"><%= days %></div>
+    <div class="stat-note">tanggal unik dengan jurnal</div>
+  </div>
+</div>
+
+<% if (total === 0) { %>
+  <div class="card empty">
+    <div class="ico">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+    </div>
+    <h3>Belum ada jurnal</h3>
+    <p>Mulai catat kegiatan PKL pertamamu. Setiap catatan akan muncul di riwayat dan rekap progres.</p>
+    <a class="btn btn-primary" href="/journals/new">Tulis Jurnal Pertama</a>
+  </div>
+<% } else { %>
+  <div class="card">
+    <div class="card-head">
+      <h2 class="grow">Aktivitas Terbaru</h2>
+      <a class="small" href="/journals">Lihat semua</a>
+    </div>
+    <div class="list">
+      <% recent.forEach(j => { const sd = shortDate(j.activity_date); %>
+        <div class="list-item">
+          <div class="date-badge"><div class="d"><%= sd.d %></div><div class="m"><%= sd.m %></div></div>
+          <div class="grow">
+            <h3><a href="/journals/<%= j.id %>"><%= j.title %></a></h3>
+            <div class="meta">
+              <span><%= fmt(j.activity_date) %></span>
+              <% if (j.start_time) { %><span><%= j.start_time %><%= j.end_time ? '–' + j.end_time : '' %></span><% } %>
+              <% if (j.photo_count > 0) { %><span class="badge badge-photo"><%= j.photo_count %> foto</span><% } %>
+            </div>
+            <p class="snippet"><%= j.description %></p>
+          </div>
+        </div>
+      <% }) %>
+    </div>
+  </div>
+  <div class="btn-row mt-2">
+    <a class="btn btn-outline" href="/journals">Riwayat Jurnal</a>
+    <a class="btn btn-outline" href="/progress">Lihat Progres</a>
+    <a class="btn btn-outline" href="/export">Ekspor Laporan PDF</a>
+  </div>
+<% } %>

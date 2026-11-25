@@ -1,0 +1,68 @@
+<%
+  const fmt = (iso) => {
+    if (!iso) return '-';
+    const d = new Date(iso + 'T00:00:00');
+    if (isNaN(d)) return iso;
+    return d.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+  };
+  const maxC = Math.max(...byMonth.map(r => r.c), 1);
+%>
+<div class="page-head">
+  <div class="grow">
+    <h1>Progres PKL</h1>
+    <p class="sub">Ringkasan dihitung dari data jurnal yang tersimpan.</p>
+  </div>
+</div>
+
+<div class="grid grid-2 mb-2">
+  <div class="stat">
+    <div class="stat-label">Total Jurnal</div>
+    <div class="stat-value"><%= total %></div>
+    <div class="stat-note">catatan yang tidak dihapus</div>
+  </div>
+  <div class="stat">
+    <div class="stat-label">Hari Tercatat</div>
+    <div class="stat-value"><%= days %></div>
+    <div class="stat-note">tanggal unik dengan minimal satu jurnal</div>
+  </div>
+</div>
+
+<% if (total === 0) { %>
+  <div class="card empty">
+    <div class="ico">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M3 3v18h18"/><path d="M7 15l4-6 3 4 5-8"/></svg>
+    </div>
+    <h3>Belum ada data progres</h3>
+    <p>Simpan jurnal pertamamu untuk melihat statistik dan rekap kegiatan.</p>
+    <a class="btn btn-primary" href="/journals/new">Tambah Jurnal</a>
+  </div>
+<% } else { %>
+  <div class="card">
+    <div class="card-head"><h2>Jurnal per Bulan</h2></div>
+    <div class="chart" role="img" aria-label="Grafik jumlah jurnal per bulan, 12 bulan terakhir">
+      <% byMonth.slice(0, 8).reverse().forEach(r => { %>
+        <div class="col" title="<%= r.label %>: <%= r.c %> jurnal">
+          <span class="cval"><%= r.c %></span>
+          <div class="barv" style="height:<%= Math.round(r.c / maxC * 100) %>%"></div>
+          <span class="clabel"><%= r.label.split(' ')[0].slice(0, 3) %> <%= r.label.split(' ')[1].slice(2) %></span>
+        </div>
+      <% }) %>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head"><h2>Rekap Bulanan</h2></div>
+    <div class="list">
+      <% byMonth.forEach(r => { %>
+        <div class="list-item">
+          <div class="grow">
+            <h3><%= r.label %></h3>
+            <div class="meta"><span><%= r.c %> jurnal</span><span><%= r.d %> hari tercatat</span></div>
+            <div class="bar mt-1"><span style="width:<%= Math.round(r.c / maxC * 100) %>%"></span></div>
+          </div>
+          <a class="btn btn-outline btn-sm" href="/journals?from=<%= r.ym %>-01&to=<%= r.ym %>-31">Lihat</a>
+        </div>
+      <% }) %>
+    </div>
+  </div>
+<% } %>

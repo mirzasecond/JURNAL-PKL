@@ -1,0 +1,84 @@
+<div class="page-head">
+  <div class="grow">
+    <h1>Setup Profil &amp; PKL</h1>
+    <p class="sub">Lengkapi data berikut supaya dashboard dan rekap bisa ditampilkan.</p>
+  </div>
+</div>
+
+<div class="card">
+  <form method="post" action="/setup" novalidate>
+    <input type="hidden" name="_csrf" value="<%= csrf %>">
+
+    <fieldset>
+      <legend>Identitas Siswa</legend>
+      <div class="field">
+        <label for="full_name">Nama Lengkap <span class="req" aria-hidden="true">*</span></label>
+        <input type="text" id="full_name" name="full_name" value="<%= profile && profile.full_name || '' %>" aria-invalid="<%= errors.full_name ? 'true' : 'false' %>" required autocomplete="name" autofocus>
+        <% if (errors.full_name) { %><p class="err"><%= errors.full_name %></p><% } %>
+      </div>
+      <div class="row row-2">
+        <div class="field">
+          <label for="student_number">NIS / NISN</label>
+          <input type="text" id="student_number" name="student_number" value="<%= profile && profile.student_number || '' %>" autocomplete="off">
+        </div>
+        <div class="field">
+          <label for="class_name">Kelas</label>
+          <input type="text" id="class_name" name="class_name" value="<%= profile && profile.class_name || '' %>" placeholder="Contoh: XII SIJA 1">
+        </div>
+      </div>
+      <div class="row row-2">
+        <div class="field">
+          <label for="program">Program Keahlian</label>
+          <input type="text" id="program" name="program" value="<%= profile && profile.program || '' %>" placeholder="Contoh: SIJA">
+        </div>
+        <div class="field">
+          <label for="school_name">Nama Sekolah</label>
+          <input type="text" id="school_name" name="school_name" value="<%= profile && profile.school_name || '' %>">
+        </div>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Informasi PKL</legend>
+      <div class="field">
+        <label for="company_name">Nama Perusahaan / Instansi <span class="req" aria-hidden="true">*</span></label>
+        <input type="text" id="company_name" name="company_name" value="<%= internship && internship.company_name || '' %>" aria-invalid="<%= errors.company_name ? 'true' : 'false' %>" required>
+        <% if (errors.company_name) { %><p class="err"><%= errors.company_name %></p><% } %>
+      </div>
+      <div class="field">
+        <label for="company_address">Alamat</label>
+        <input type="text" id="company_address" name="company_address" value="<%= internship && internship.company_address || '' %>">
+      </div>
+      <div class="row row-2">
+        <div class="field">
+          <label for="supervisor_name">Nama Pembimbing Industri</label>
+          <input type="text" id="supervisor_name" name="supervisor_name" value="<%= internship && internship.supervisor_name || '' %>">
+        </div>
+        <div class="field">
+          <label for="position">Posisi / Divisi</label>
+          <input type="text" id="position" name="position" value="<%= internship && internship.position || '' %>">
+        </div>
+      </div>
+      <div class="row row-2">
+        <div class="field">
+          <label for="start_date">Tanggal Mulai PKL <span class="req" aria-hidden="true">*</span></label>
+          <input type="date" id="start_date" name="start_date" value="<%= internship && internship.start_date || '' %>" aria-invalid="<%= errors.start_date ? 'true' : 'false' %>" required>
+          <% if (errors.start_date) { %><p class="err"><%= errors.start_date %></p><% } %>
+        </div>
+        <div class="field">
+          <label for="end_date">Tanggal Selesai PKL <span class="req" aria-hidden="true">*</span></label>
+          <input type="date" id="end_date" name="end_date" value="<%= internship && internship.end_date || '' %>" aria-invalid="<%= errors.end_date ? 'true' : 'false' %>" required>
+          <% if (errors.end_date) { %><p class="err"><%= errors.end_date %></p><% } %>
+        </div>
+      </div>
+      <div class="field">
+        <label for="description">Deskripsi Kegiatan PKL</label>
+        <textarea id="description" name="description" placeholder="Gambaran singkat pekerjaan selama PKL (opsional)"><%= internship && internship.description || '' %></textarea>
+      </div>
+    </fieldset>
+
+    <div class="btn-row">
+      <button type="submit" class="btn btn-primary" data-busy>Simpan &amp; Lanjutkan</button>
+    </div>
+  </form>
+</div>

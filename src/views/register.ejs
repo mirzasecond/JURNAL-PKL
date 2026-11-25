@@ -1,0 +1,27 @@
+<div class="auth-col">
+  <div class="auth-card">
+    <h1>Buat Akun Baru</h1>
+    <p class="sub">Satu akun untuk seluruh jurnal PKL-mu.</p>
+
+    <form method="post" action="/register" novalidate>
+      <input type="hidden" name="_csrf" value="<%= csrf %>">
+      <div class="field">
+        <label for="email">Email <span class="req" aria-hidden="true">*</span></label>
+        <input type="email" id="email" name="email" value="<%= values.email || '' %>" aria-invalid="<%= errors.email ? 'true' : 'false' %>" required autocomplete="email" autofocus>
+        <% if (errors.email) { %><p class="err"><%= errors.email %></p><% } %>
+      </div>
+      <div class="field">
+        <label for="password">Kata Sandi <span class="req" aria-hidden="true">*</span></label>
+        <input type="password" id="password" name="password" aria-invalid="<%= errors.password ? 'true' : 'false' %>" required minlength="8" autocomplete="new-password">
+        <% if (errors.password) { %><p class="err"><%= errors.password %></p><% } else { %><p class="hint">Minimal 8 karakter.</p><% } %>
+      </div>
+      <div class="field">
+        <label for="password_confirm">Konfirmasi Kata Sandi <span class="req" aria-hidden="true">*</span></label>
+        <input type="password" id="password_confirm" name="password_confirm" aria-invalid="<%= errors.password_confirm ? 'true' : 'false' %>" required autocomplete="new-password">
+        <% if (errors.password_confirm) { %><p class="err"><%= errors.password_confirm %></p><% } %>
+      </div>
+      <button type="submit" class="btn btn-primary btn-block" data-busy>Daftar</button>
+    </form>
+    <p class="auth-link">Sudah punya akun? <a href="/login">Masuk</a></p>
+  </div>
+</div>
